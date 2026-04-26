@@ -1,0 +1,15 @@
+# Binaries
+gh-ulb
+gh-ulb.exe
+dist/
+
+# Test coverage
+coverage.out
+*.coverprofile
+
+# Go build cache
+/vendor/
+
+# OS
+.DS_Store
+Thumbs.db
