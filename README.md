@@ -15,45 +15,14 @@
 
 ### Authentication Scopes
 
-This extension calls enterprise billing and team membership APIs. Your token must include the right scopes.
+This extension requires enterprise billing and team-read scopes.
 
-For classic personal access tokens (PATs), use one of these approaches:
+For most users, these classic PAT scopes are sufficient:
 
-- Least privilege for all `gh ulb` commands: `manage_billing:enterprise`, `read:org`, `read:enterprise`
-- Single broad scope alternative: `admin:enterprise` plus `read:org`
+- `manage_billing:enterprise`, `read:org`, `read:enterprise`
+- or `admin:enterprise` + `read:org`
 
-Scope usage by command:
-
-| Command | APIs used | Required classic PAT scopes |
-|------|-------|-------------|
-| `set-universal` | `POST /enterprises/{enterprise}/settings/billing/budgets` | `manage_billing:enterprise` (or `admin:enterprise`) |
-| `set-user` | `POST /enterprises/{enterprise}/settings/billing/budgets` | `manage_billing:enterprise` (or `admin:enterprise`) |
-| `set-csv` | `POST/GET/PATCH /enterprises/{enterprise}/settings/billing/budgets...` | `manage_billing:enterprise` (or `admin:enterprise`) |
-| `list` | `GET /enterprises/{enterprise}/settings/billing/budgets` | `manage_billing:enterprise` (or `admin:enterprise`) |
-| `get` | `GET /enterprises/{enterprise}/settings/billing/budgets?user=...` | `manage_billing:enterprise` (or `admin:enterprise`) |
-| `update` | `PATCH /enterprises/{enterprise}/settings/billing/budgets/{id}` | `manage_billing:enterprise` (or `admin:enterprise`) |
-| `delete` | `DELETE /enterprises/{enterprise}/settings/billing/budgets/{id}` | `manage_billing:enterprise` (or `admin:enterprise`) |
-| `delete-universal-budget` | `GET /enterprises/{enterprise}/settings/billing/budgets` + `DELETE /enterprises/{enterprise}/settings/billing/budgets/{id}` | `manage_billing:enterprise` (or `admin:enterprise`) |
-| `set-team` | `GET /orgs/{org}/teams/{team}/members` + budget APIs | `read:org` + `manage_billing:enterprise` (or `admin:enterprise`) |
-| `set-enterprise-team` | `GET /enterprises/{enterprise}/teams/{team}/memberships` + budget APIs | `read:enterprise` + `manage_billing:enterprise` (or `admin:enterprise`) |
-| `delete-team` | `GET /orgs/{org}/teams/{team}/members` + `DELETE` budget APIs | `read:org` + `manage_billing:enterprise` (or `admin:enterprise`) |
-| `delete-enterprise-team` | `GET /enterprises/{enterprise}/teams/{team}/memberships` + `DELETE` budget APIs | `read:enterprise` + `manage_billing:enterprise` (or `admin:enterprise`) |
-| `delete-csv` | `GET` + `DELETE` budget APIs | `manage_billing:enterprise` (or `admin:enterprise`) |
-
-If you also run raw enterprise-team discovery calls like `GET /enterprises/{enterprise}/teams`, include `read:enterprise` (or use `admin:enterprise`).
-
-Check currently granted scopes:
-
-```bash
-gh auth status -t
-gh api -i /user | grep -iE '^(x-oauth-scopes|x-accepted-oauth-scopes):'
-```
-
-Request additional scopes for your active account:
-
-```bash
-gh auth refresh -h github.com -s manage_billing:enterprise -s read:enterprise -s read:org
-```
+For full command-by-command requirements, scope verification, and refresh commands, see [docs/permissions.md](docs/permissions.md).
 
 ---
 
@@ -63,9 +32,9 @@ gh auth refresh -h github.com -s manage_billing:enterprise -s read:enterprise -s
 gh extension install colinbeales/gh-ulb
 ```
 
-## GitHub Enterprise Cloud on GHE.com (GitHub Enterprise Cloud with Data Residency)
+## Working with GitHub Enterprise Cloud with Data Residency
 
-For enterprises hosted on GHE.com, API calls must target your enterprise host (for example, `api.<subdomain>.ghe.com`) instead of `api.github.com`.
+For GitHub Enterprise Cloud with Data Residency enterprises hosted on GHE.com, API calls must target your enterprise host (for example, `api.<subdomain>.ghe.com`) instead of `api.github.com`.
 
 `gh-ulb` supports this via either:
 
@@ -90,12 +59,6 @@ gh auth login --hostname my-enterprise.ghe.com
 ```
 
 If the auth host and command host differ, requests may fail with 401/403/404 even when flags and scopes look correct.
-
----
-
-## Development & Releases
-
-For maintainer release procedures, see [docs/releasing.md](docs/releasing.md).
 
 ---
 
@@ -508,6 +471,12 @@ A per-user budget always takes precedence over the universal budget for that use
 | `409 Conflict` | A budget for this user already exists | Batch commands (`set-team`, `set-csv`) handle 409s automatically by updating the existing budget |
 | Rate limiting (`429`) | Too many concurrent API requests | Reduce `--concurrency`; batch commands retry automatically with exponential backoff |
 | Unexpected changes | Want to preview before applying | Use `--dry-run` on any batch command to see what would happen without making API calls |
+
+---
+
+## Development & Releases
+
+For maintainer release procedures, see [docs/releasing.md](docs/releasing.md).
 
 ---
 
