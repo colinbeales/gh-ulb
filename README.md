@@ -3,7 +3,7 @@
 ![Go Version](https://img.shields.io/badge/go-1.22-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-`gh-ulb` is a GitHub CLI extension for managing Copilot **User-Level Budgets (ULB)** — enterprise-level controls over Copilot premium request spend. With ULB you can set monthly spending caps per user, override them for specific individuals, and manage budgets in bulk via GitHub Teams or CSV import.
+`gh-ulb` is a GitHub CLI extension for managing Copilot **User-Level Budgets (ULB)** — enterprise-level controls over Copilot spend. With ULB you can set monthly spending caps per user, override them for specific individuals, and manage budgets in bulk via GitHub Teams or CSV import.
 
 ---
 
