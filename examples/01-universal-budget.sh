@@ -9,7 +9,7 @@ gh ulb set-universal \
 gh ulb list --enterprise my-enterprise
 
 # Remove the universal budget again (interactive)
-gh ulb delete-universal-budget --enterprise my-enterprise
+gh ulb delete-universal --enterprise my-enterprise
 
 # Remove without prompt (for scripting)
-gh ulb delete-universal-budget --enterprise my-enterprise --confirm
+gh ulb delete-universal --enterprise my-enterprise --confirm

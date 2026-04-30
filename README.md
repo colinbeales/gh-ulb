@@ -263,7 +263,7 @@ Update an existing budget by its ID.
 | Flag | Short | Description |
 |------|-------|-------------|
 | `--enterprise` | `-e` | Enterprise slug (required) |
-| `--budget-id` | | Budget ID to update (required) |
+| `--budget-id` | `-b` | Budget ID to update (required) |
 | `--amount` | `-a` | New monthly budget in USD (required) |
 | `--prevent-overage` | | Block usage once budget is reached (default: keep existing value unless explicitly set) |
 | `--json` | | Output as JSON |
@@ -288,7 +288,7 @@ Delete a budget by its ID.
 | Flag | Short | Description |
 |------|-------|-------------|
 | `--enterprise` | `-e` | Enterprise slug (required) |
-| `--budget-id` | | Budget ID to delete (required) |
+| `--budget-id` | `-b` | Budget ID to delete (required) |
 | `--confirm` | | Skip confirmation prompt |
 
 **Example**
@@ -303,7 +303,7 @@ gh ulb delete --enterprise my-enterprise --budget-id BUDGET_ID --confirm
 
 ---
 
-### `delete-universal-budget`
+### `delete-universal`
 
 Delete the universal budget (`multi_user_customer` scope).
 
@@ -320,10 +320,10 @@ This command lists enterprise budgets, finds the `multi_user_customer` entry, an
 
 ```bash
 # Interactive confirmation
-gh ulb delete-universal-budget --enterprise my-enterprise
+gh ulb delete-universal --enterprise my-enterprise
 
 # Non-interactive / scripting
-gh ulb delete-universal-budget --enterprise my-enterprise --confirm
+gh ulb delete-universal --enterprise my-enterprise --confirm
 ```
 
 ---

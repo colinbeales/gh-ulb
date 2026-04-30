@@ -20,7 +20,7 @@ Use one of these approaches:
 | `get` | `GET /enterprises/{enterprise}/settings/billing/budgets?user=...` | `manage_billing:enterprise` (or `admin:enterprise`) |
 | `update` | `PATCH /enterprises/{enterprise}/settings/billing/budgets/{id}` | `manage_billing:enterprise` (or `admin:enterprise`) |
 | `delete` | `DELETE /enterprises/{enterprise}/settings/billing/budgets/{id}` | `manage_billing:enterprise` (or `admin:enterprise`) |
-| `delete-universal-budget` | `GET /enterprises/{enterprise}/settings/billing/budgets` + `DELETE /enterprises/{enterprise}/settings/billing/budgets/{id}` | `manage_billing:enterprise` (or `admin:enterprise`) |
+| `delete-universal` | `GET /enterprises/{enterprise}/settings/billing/budgets` + `DELETE /enterprises/{enterprise}/settings/billing/budgets/{id}` | `manage_billing:enterprise` (or `admin:enterprise`) |
 | `set-team` | `GET /orgs/{org}/teams/{team}/members` + budget APIs | `read:org` + `manage_billing:enterprise` (or `admin:enterprise`) |
 | `set-enterprise-team` | `GET /enterprises/{enterprise}/teams/{team}/memberships` + budget APIs | `read:enterprise` + `manage_billing:enterprise` (or `admin:enterprise`) |
 | `delete-team` | `GET /orgs/{org}/teams/{team}/members` + `DELETE` budget APIs | `read:org` + `manage_billing:enterprise` (or `admin:enterprise`) |

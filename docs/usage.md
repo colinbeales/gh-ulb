@@ -47,7 +47,7 @@ A per-user budget always wins over the universal budget. If a user has no person
 | `get` | Check what limit a specific user is operating under |
 | `update` | Adjust an existing budget without deleting and recreating it |
 | `delete` | Remove a budget (user reverts to universal budget or no limit) |
-| `delete-universal-budget` | Remove the universal enterprise-wide budget |
+| `delete-universal` | Remove the universal enterprise-wide budget |
 | `delete-team` | Remove budgets for all members of an org-level GitHub Team |
 | `delete-enterprise-team` | Remove budgets for all members of an Enterprise Team |
 | `delete-csv` | Remove budgets for all users listed in a CSV file |

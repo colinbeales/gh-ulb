@@ -13,8 +13,8 @@ import (
 
 var deleteUniversalConfirm bool
 
-var deleteUniversalBudgetCmd = &cobra.Command{
-	Use:   "delete-universal-budget",
+var deleteUniversalCmd = &cobra.Command{
+	Use:   "delete-universal",
 	Short: "Delete the universal (multi_user_customer) budget",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if !deleteUniversalConfirm {
@@ -54,6 +54,6 @@ var deleteUniversalBudgetCmd = &cobra.Command{
 }
 
 func init() {
-	deleteUniversalBudgetCmd.Flags().BoolVar(&deleteUniversalConfirm, "confirm", false, "Skip confirmation prompt")
-	rootCmd.AddCommand(deleteUniversalBudgetCmd)
+	deleteUniversalCmd.Flags().BoolVar(&deleteUniversalConfirm, "confirm", false, "Skip confirmation prompt")
+	rootCmd.AddCommand(deleteUniversalCmd)
 }

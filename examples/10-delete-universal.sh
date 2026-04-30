@@ -2,10 +2,10 @@
 # Delete the enterprise-wide universal budget (multi_user_customer scope)
 
 # Interactive confirmation
-gh ulb delete-universal-budget \
+gh ulb delete-universal \
   --enterprise my-enterprise
 
 # Non-interactive / scripting
-gh ulb delete-universal-budget \
+gh ulb delete-universal \
   --enterprise my-enterprise \
   --confirm
