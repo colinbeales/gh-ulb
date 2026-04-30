@@ -11,6 +11,7 @@ import (
 
 var setEnterpriseTeamSlug string
 var setEnterpriseTeamAmount float64
+var setEnterpriseTeamPreventOverage bool
 var setEnterpriseTeamDryRun bool
 var setEnterpriseTeamConcurrency int
 
@@ -33,7 +34,7 @@ var setEnterpriseTeamCmd = &cobra.Command{
 			entries[i] = batch.UserBudgetEntry{Username: m.Login, Amount: setEnterpriseTeamAmount}
 		}
 
-		_, err = batch.Run(cmd.Context(), client, enterprise, entries, setEnterpriseTeamConcurrency, setEnterpriseTeamDryRun, os.Stdout)
+		_, err = batch.Run(cmd.Context(), client, enterprise, entries, setEnterpriseTeamPreventOverage, setEnterpriseTeamConcurrency, setEnterpriseTeamDryRun, os.Stdout)
 		return err
 	},
 }
@@ -41,6 +42,7 @@ var setEnterpriseTeamCmd = &cobra.Command{
 func init() {
 	setEnterpriseTeamCmd.Flags().StringVarP(&setEnterpriseTeamSlug, "team", "t", "", "Enterprise team slug (required)")
 	setEnterpriseTeamCmd.Flags().Float64VarP(&setEnterpriseTeamAmount, "amount", "a", 0, "Budget dollar amount per user (required)")
+	setEnterpriseTeamCmd.Flags().BoolVar(&setEnterpriseTeamPreventOverage, "prevent-overage", true, "Block usage when budget exhausted")
 	setEnterpriseTeamCmd.Flags().BoolVar(&setEnterpriseTeamDryRun, "dry-run", false, "Preview changes without applying them")
 	setEnterpriseTeamCmd.Flags().IntVar(&setEnterpriseTeamConcurrency, "concurrency", 5, "Number of parallel API calls")
 	if err := setEnterpriseTeamCmd.MarkFlagRequired("team"); err != nil {

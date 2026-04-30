@@ -4,10 +4,20 @@
 
 Copilot premium requests (e.g. GPT-4o, Claude Sonnet, o1) consume from a monthly budget that resets on the first day of each calendar month. Budgets are denominated in USD and track premium-only spend — standard Copilot requests included in your subscription are not counted.
 
+## Hard vs soft budgets (`--prevent-overage`)
+
+`gh-ulb` defaults to hard-stop behavior for budget commands:
+
+- Hard budget (`--prevent-overage=true`, default): blocks further premium requests when the budget is exhausted.
+- Soft budget (`--prevent-overage=false`): allows premium usage to continue after exhaustion while usage is tracked and reported.
+
+This option is available on `set-universal`, `set-user`, `set-team`, `set-enterprise-team`, and `set-csv`.
+For `update`, the existing behavior is kept unless `--prevent-overage` is explicitly provided.
+
 When a budget is exhausted:
 
-- If `--prevent-overage` was set, further premium requests are blocked for that user until the budget resets.
-- If `--prevent-overage` was not set, usage continues but is tracked and reported.
+- If `--prevent-overage=true`, further premium requests are blocked for that user until the budget resets.
+- If `--prevent-overage=false`, usage continues but is tracked and reported.
 
 ---
 

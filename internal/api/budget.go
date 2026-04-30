@@ -74,10 +74,13 @@ func ListBudgets(client *Client, enterprise string, opts ListBudgetsOptions) ([]
 	return all, nil
 }
 
-func UpdateBudget(client *Client, enterprise string, budgetID string, amount float64) (*Budget, error) {
+func UpdateBudget(client *Client, enterprise string, budgetID string, amount float64, preventFurtherUsage *bool) (*Budget, error) {
 	var result Budget
 	path := fmt.Sprintf("enterprises/%s/settings/billing/budgets/%s", enterprise, budgetID)
 	body := map[string]interface{}{"budget_amount": amount}
+	if preventFurtherUsage != nil {
+		body["prevent_further_usage"] = *preventFurtherUsage
+	}
 	if err := client.Patch(path, body, &result); err != nil {
 		return nil, err
 	}

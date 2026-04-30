@@ -12,6 +12,7 @@ import (
 
 var setCsvFile string
 var setCsvAmount float64
+var setCsvPreventOverage bool
 var setCsvDryRun bool
 var setCsvConcurrency int
 
@@ -51,7 +52,7 @@ var setCsvCmd = &cobra.Command{
 			return fmt.Errorf("creating client: %w", err)
 		}
 
-		_, err = batch.Run(cmd.Context(), client, enterprise, entries, setCsvConcurrency, setCsvDryRun, os.Stdout)
+		_, err = batch.Run(cmd.Context(), client, enterprise, entries, setCsvPreventOverage, setCsvConcurrency, setCsvDryRun, os.Stdout)
 		return err
 	},
 }
@@ -59,6 +60,7 @@ var setCsvCmd = &cobra.Command{
 func init() {
 	setCsvCmd.Flags().StringVarP(&setCsvFile, "file", "f", "", "Path to CSV file (required)")
 	setCsvCmd.Flags().Float64VarP(&setCsvAmount, "amount", "a", 0, "Default budget dollar amount (used when CSV row has no amount)")
+	setCsvCmd.Flags().BoolVar(&setCsvPreventOverage, "prevent-overage", true, "Block usage when budget exhausted")
 	setCsvCmd.Flags().BoolVar(&setCsvDryRun, "dry-run", false, "Preview changes without applying them")
 	setCsvCmd.Flags().IntVar(&setCsvConcurrency, "concurrency", 5, "Number of parallel API calls")
 	if err := setCsvCmd.MarkFlagRequired("file"); err != nil {

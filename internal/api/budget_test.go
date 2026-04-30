@@ -160,7 +160,7 @@ func TestUpdateBudget_Success(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts)
-	b, err := UpdateBudget(client, "my-enterprise", "b1", 99.0)
+	b, err := UpdateBudget(client, "my-enterprise", "b1", 99.0, nil)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

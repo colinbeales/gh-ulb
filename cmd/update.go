@@ -11,6 +11,7 @@ import (
 
 var updateBudgetID string
 var updateAmount float64
+var updatePreventOverage bool
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
@@ -22,7 +23,12 @@ var updateCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		budget, err := api.UpdateBudget(client, enterprise, updateBudgetID, updateAmount)
+		var preventFurtherUsage *bool
+		if cmd.Flags().Changed("prevent-overage") {
+			preventFurtherUsage = &updatePreventOverage
+		}
+
+		budget, err := api.UpdateBudget(client, enterprise, updateBudgetID, updateAmount, preventFurtherUsage)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -40,6 +46,7 @@ var updateCmd = &cobra.Command{
 func init() {
 	updateCmd.Flags().StringVarP(&updateBudgetID, "budget-id", "b", "", "Budget ID (required)")
 	updateCmd.Flags().Float64VarP(&updateAmount, "amount", "a", 0, "New dollar amount (required)")
+	updateCmd.Flags().BoolVar(&updatePreventOverage, "prevent-overage", true, "Block usage when budget exhausted")
 	if err := updateCmd.MarkFlagRequired("budget-id"); err != nil {
 		panic(err)
 	}

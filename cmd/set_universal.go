@@ -10,7 +10,7 @@ import (
 )
 
 var setUniversalAmount float64
-var preventOverage bool
+var setUniversalPreventOverage bool
 
 var setUniversalCmd = &cobra.Command{
 	Use:   "set-universal",
@@ -27,7 +27,7 @@ var setUniversalCmd = &cobra.Command{
 			BudgetScope:         "multi_user_customer",
 			BudgetProductSku:    "premium_requests",
 			BudgetType:          "BundlePricing",
-			PreventFurtherUsage: preventOverage,
+			PreventFurtherUsage: setUniversalPreventOverage,
 			BudgetAlerting:      api.BudgetAlerting{WillAlert: false, AlertRecipients: []string{}},
 		}
 
@@ -48,7 +48,7 @@ var setUniversalCmd = &cobra.Command{
 
 func init() {
 	setUniversalCmd.Flags().Float64VarP(&setUniversalAmount, "amount", "a", 0, "Budget dollar amount (required)")
-	setUniversalCmd.Flags().BoolVar(&preventOverage, "prevent-overage", true, "Block usage when budget exhausted")
+	setUniversalCmd.Flags().BoolVar(&setUniversalPreventOverage, "prevent-overage", true, "Block usage when budget exhausted")
 	if err := setUniversalCmd.MarkFlagRequired("amount"); err != nil {
 		panic(err)
 	}

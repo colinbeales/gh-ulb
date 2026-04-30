@@ -66,6 +66,15 @@ If the auth host and command host differ, requests may fail with 401/403/404 eve
 
 All commands accept a `--enterprise` / `-e` flag (required) to specify the GitHub Enterprise slug.
 
+### Hard vs Soft Budgets
+
+`gh-ulb` is opinionated toward hard budgets by default:
+
+- `--prevent-overage=true` (default): hard-stop. Requests using AI Credits are blocked after the budget is reached.
+- `--prevent-overage=false`: soft budget. Usage can continue past budget alert.
+
+You can override this on `set-universal`, `set-user`, `set-team`, `set-enterprise-team`, `set-csv`, and `update`.
+
 ### `set-universal`
 
 Create or update the universal budget that applies to all Copilot users in the enterprise.
@@ -76,7 +85,7 @@ Create or update the universal budget that applies to all Copilot users in the e
 |------|-------|-------------|
 | `--enterprise` | `-e` | Enterprise slug (required) |
 | `--amount` | `-a` | Monthly budget in USD (required) |
-| `--prevent-overage` | | Block usage once budget is reached |
+| `--prevent-overage` | | Block usage once budget is reached (default: `true`; set `false` for soft budget) |
 | `--dry-run` | | Preview without making changes |
 | `--json` | | Output result as JSON |
 
@@ -102,7 +111,7 @@ Create a per-user budget override for a specific enterprise member.
 | `--enterprise` | `-e` | Enterprise slug (required) |
 | `--user` | `-u` | GitHub username (required) |
 | `--amount` | `-a` | Monthly budget in USD (required) |
-| `--prevent-overage` | | Block usage once budget is reached |
+| `--prevent-overage` | | Block usage once budget is reached (default: `true`; set `false` for soft budget) |
 | `--dry-run` | | Preview without making changes |
 | `--json` | | Output result as JSON |
 
@@ -129,7 +138,7 @@ Set budgets for all members of an organization-level GitHub Team.
 | `--org` | `-o` | Organization slug (required) |
 | `--team` | `-t` | Team slug (required) |
 | `--amount` | `-a` | Monthly budget in USD (required) |
-| `--prevent-overage` | | Block usage once budget is reached |
+| `--prevent-overage` | | Block usage once budget is reached (default: `true`; set `false` for soft budget) |
 | `--concurrency` | `-c` | Number of concurrent API calls (default: 5) |
 | `--dry-run` | | Preview without making changes |
 | `--json` | | Output result as JSON |
@@ -158,7 +167,7 @@ Set budgets for all members of an Enterprise Team (not org-scoped).
 | `--enterprise` | `-e` | Enterprise slug (required) |
 | `--team` | `-t` | Enterprise team slug (required) |
 | `--amount` | `-a` | Monthly budget in USD (required) |
-| `--prevent-overage` | | Block usage once budget is reached |
+| `--prevent-overage` | | Block usage once budget is reached (default: `true`; set `false` for soft budget) |
 | `--concurrency` | `-c` | Number of concurrent API calls (default: 5) |
 | `--dry-run` | | Preview without making changes |
 | `--json` | | Output result as JSON |
@@ -185,7 +194,7 @@ Set budgets for multiple users from a CSV file.
 | `--enterprise` | `-e` | Enterprise slug (required) |
 | `--file` | `-f` | Path to CSV file (required) |
 | `--amount` | `-a` | Default monthly budget if CSV has no `amount` column |
-| `--prevent-overage` | | Block usage once budget is reached |
+| `--prevent-overage` | | Block usage once budget is reached (default: `true`; set `false` for soft budget) |
 | `--concurrency` | `-c` | Number of concurrent API calls (default: 5) |
 | `--dry-run` | | Preview without making changes |
 | `--json` | | Output result as JSON |
@@ -200,7 +209,8 @@ gh ulb set-csv \
 
 gh ulb set-csv \
   --enterprise my-enterprise \
-  --file users.csv
+  --file users.csv \
+  --prevent-overage=false
 ```
 
 ---
@@ -255,7 +265,7 @@ Update an existing budget by its ID.
 | `--enterprise` | `-e` | Enterprise slug (required) |
 | `--budget-id` | | Budget ID to update (required) |
 | `--amount` | `-a` | New monthly budget in USD (required) |
-| `--prevent-overage` | | Block usage once budget is reached |
+| `--prevent-overage` | | Block usage once budget is reached (default: keep existing value unless explicitly set) |
 | `--json` | | Output as JSON |
 
 **Example**
