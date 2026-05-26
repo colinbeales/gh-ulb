@@ -200,6 +200,8 @@ Set budgets for multiple users from a CSV file.
 | `--dry-run` | | Preview without making changes |
 | `--json` | | Output result as JSON |
 
+The [CSV file format](#csv-format) must have a username (or user/login) column. An amount column is not required. If not present `--amount` flag is required and will be used for all users.
+
 **Example**
 
 ```bash
@@ -410,7 +412,7 @@ Delete per-user budgets for all users listed in a CSV file.
 | `--dry-run` | | Preview without making changes |
 | `--confirm` | | Skip confirmation prompt |
 
-The CSV file must have a `username` (or `user`/`login`) column. An `amount` column is not required and will be ignored.
+The [CSV file format](#csv-format) must have a `username` (or `user`/`login`) column. An `amount` column is not required and will be ignored.
 
 **Example**
 
