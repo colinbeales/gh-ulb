@@ -46,7 +46,8 @@ Examples:
 ```bash
 gh ulb list --enterprise my-enterprise --hostname my-enterprise.ghe.com
 
-GH_HOST=my-enterprise.ghe.com gh ulb set-enterprise-team \
+GH_HOST=my-enterprise.ghe.com
+gh ulb set-enterprise-team \
   --enterprise my-enterprise \
   --team foo \
   --amount 15.00
