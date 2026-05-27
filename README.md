@@ -46,7 +46,8 @@ Examples:
 ```bash
 gh ulb list --enterprise my-enterprise --hostname my-enterprise.ghe.com
 
-GH_HOST=my-enterprise.ghe.com gh ulb set-enterprise-team \
+GH_HOST=my-enterprise.ghe.com
+gh ulb set-enterprise-team \
   --enterprise my-enterprise \
   --team foo \
   --amount 15.00
@@ -188,6 +189,8 @@ Set budgets for multiple users from a CSV file.
 | `--concurrency` | `-c` | Number of concurrent API calls (default: 5) |
 | `--dry-run` | | Preview without making changes |
 | `--json` | | Output result as JSON |
+
+The [CSV file format](#csv-format) must have a username (or user/login) column. An amount column is not required. If not present `--amount` flag is required and will be used for all users.
 
 **Example**
 
@@ -397,7 +400,7 @@ Delete per-user budgets for all users listed in a CSV file.
 | `--dry-run` | | Preview without making changes |
 | `--confirm` | | Skip confirmation prompt |
 
-The CSV file must have a `username` (or `user`/`login`) column. An `amount` column is not required and will be ignored.
+The [CSV file format](#csv-format) must have a `username` (or `user`/`login`) column. An `amount` column is not required and will be ignored.
 
 **Example**
 
