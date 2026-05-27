@@ -37,7 +37,7 @@ func TestRun_DryRun(t *testing.T) {
 
 	client := newTestAPIClient(t, ts)
 	var buf bytes.Buffer
-	result, err := Run(context.Background(), client, "my-enterprise", entries, true, 2, true, &buf)
+	result, err := Run(context.Background(), client, "my-enterprise", entries, 2, true, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -81,7 +81,7 @@ func TestRun_AllCreated(t *testing.T) {
 
 	client := newTestAPIClient(t, ts)
 	var buf bytes.Buffer
-	result, err := Run(context.Background(), client, "my-enterprise", entries, true, 2, false, &buf)
+	result, err := Run(context.Background(), client, "my-enterprise", entries, 2, false, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -127,7 +127,7 @@ func TestRun_AllUpdated(t *testing.T) {
 
 	client := newTestAPIClient(t, ts)
 	var buf bytes.Buffer
-	result, err := Run(context.Background(), client, "my-enterprise", entries, true, 1, false, &buf)
+	result, err := Run(context.Background(), client, "my-enterprise", entries, 1, false, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -157,7 +157,7 @@ func TestRun_Failed(t *testing.T) {
 
 	client := newTestAPIClient(t, ts)
 	var buf bytes.Buffer
-	result, err := Run(context.Background(), client, "my-enterprise", entries, true, 1, false, &buf)
+	result, err := Run(context.Background(), client, "my-enterprise", entries, 1, false, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -185,7 +185,7 @@ func TestRun_SummaryLine(t *testing.T) {
 
 	client := newTestAPIClient(t, ts)
 	var buf bytes.Buffer
-	_, err := Run(context.Background(), client, "my-enterprise", entries, true, 2, false, &buf)
+	_, err := Run(context.Background(), client, "my-enterprise", entries, 2, false, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -215,7 +215,7 @@ func TestRun_Concurrency(t *testing.T) {
 
 	client := newTestAPIClient(t, ts)
 	var buf bytes.Buffer
-	result, err := Run(context.Background(), client, "my-enterprise", entries, true, 3, false, &buf)
+	result, err := Run(context.Background(), client, "my-enterprise", entries, 3, false, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

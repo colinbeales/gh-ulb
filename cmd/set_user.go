@@ -11,7 +11,6 @@ import (
 
 var setUserUsername string
 var setUserAmount float64
-var setUserPreventOverage bool
 
 var setUserCmd = &cobra.Command{
 	Use:   "set-user",
@@ -29,7 +28,7 @@ var setUserCmd = &cobra.Command{
 			BudgetProductSku:    "premium_requests",
 			BudgetType:          "BundlePricing",
 			User:                setUserUsername,
-			PreventFurtherUsage: setUserPreventOverage,
+			PreventFurtherUsage: true,
 			BudgetAlerting:      api.BudgetAlerting{WillAlert: false, AlertRecipients: []string{}},
 		}
 
@@ -51,7 +50,6 @@ var setUserCmd = &cobra.Command{
 func init() {
 	setUserCmd.Flags().StringVarP(&setUserUsername, "user", "u", "", "GitHub username (required)")
 	setUserCmd.Flags().Float64VarP(&setUserAmount, "amount", "a", 0, "Budget dollar amount (required)")
-	setUserCmd.Flags().BoolVar(&setUserPreventOverage, "prevent-overage", true, "Block usage when budget exhausted")
 	if err := setUserCmd.MarkFlagRequired("user"); err != nil {
 		panic(err)
 	}

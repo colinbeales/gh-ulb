@@ -38,7 +38,7 @@ While bash scripts wrapping `gh api` would work, Go is the better choice because
 
 **`set-universal`:**
 - `--amount, -a` (required) — budget dollar amount (float64)
-- `--prevent-overage` — block usage when budget exhausted (default: true)
+- hard-stop enforcement is always enabled (`prevent_further_usage: true`)
 
 **`set-user`:**
 - `--user, -u` (required) — GitHub username

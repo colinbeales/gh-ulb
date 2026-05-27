@@ -12,7 +12,6 @@ import (
 var setTeamOrg string
 var setTeamSlug string
 var setTeamAmount float64
-var setTeamPreventOverage bool
 var setTeamDryRun bool
 var setTeamConcurrency int
 
@@ -35,7 +34,7 @@ var setTeamCmd = &cobra.Command{
 			entries[i] = batch.UserBudgetEntry{Username: m.Login, Amount: setTeamAmount}
 		}
 
-		_, err = batch.Run(cmd.Context(), client, enterprise, entries, setTeamPreventOverage, setTeamConcurrency, setTeamDryRun, os.Stdout)
+		_, err = batch.Run(cmd.Context(), client, enterprise, entries, setTeamConcurrency, setTeamDryRun, os.Stdout)
 		return err
 	},
 }
@@ -44,7 +43,6 @@ func init() {
 	setTeamCmd.Flags().StringVarP(&setTeamOrg, "org", "o", "", "Organization name (required)")
 	setTeamCmd.Flags().StringVarP(&setTeamSlug, "team", "t", "", "Team slug (required)")
 	setTeamCmd.Flags().Float64VarP(&setTeamAmount, "amount", "a", 0, "Budget dollar amount per user (required)")
-	setTeamCmd.Flags().BoolVar(&setTeamPreventOverage, "prevent-overage", true, "Block usage when budget exhausted")
 	setTeamCmd.Flags().BoolVar(&setTeamDryRun, "dry-run", false, "Preview changes without applying them")
 	setTeamCmd.Flags().IntVar(&setTeamConcurrency, "concurrency", 5, "Number of parallel API calls")
 	if err := setTeamCmd.MarkFlagRequired("org"); err != nil {

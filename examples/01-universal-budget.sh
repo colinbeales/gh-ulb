@@ -2,8 +2,7 @@
 # Set a $10/month universal budget for all Copilot users
 gh ulb set-universal \
   --enterprise my-enterprise \
-  --amount 10.00 \
-  --prevent-overage
+  --amount 10.00
 
 # List all budgets to confirm
 gh ulb list --enterprise my-enterprise

@@ -53,7 +53,7 @@ func (lw *lockedWriter) Write(p []byte) (n int, err error) {
 	return lw.w.Write(p)
 }
 
-func Run(ctx context.Context, client *api.Client, enterprise string, entries []UserBudgetEntry, preventOverage bool, concurrency int, dryRun bool, w io.Writer) (BatchResult, error) {
+func Run(ctx context.Context, client *api.Client, enterprise string, entries []UserBudgetEntry, concurrency int, dryRun bool, w io.Writer) (BatchResult, error) {
 	if dryRun {
 		var result BatchResult
 		for _, e := range entries {
@@ -76,7 +76,7 @@ func Run(ctx context.Context, client *api.Client, enterprise string, entries []U
 		go func() {
 			defer wg.Done()
 			defer func() { <-sem }()
-			ur := processUser(ctx, client, enterprise, entry, preventOverage, lw)
+			ur := processUser(ctx, client, enterprise, entry, lw)
 			mu.Lock()
 			result.Results = append(result.Results, ur)
 			switch ur.Action {
@@ -96,13 +96,13 @@ func Run(ctx context.Context, client *api.Client, enterprise string, entries []U
 	return result, nil
 }
 
-func processUser(ctx context.Context, client *api.Client, enterprise string, entry UserBudgetEntry, preventOverage bool, w io.Writer) UserResult {
+func processUser(ctx context.Context, client *api.Client, enterprise string, entry UserBudgetEntry, w io.Writer) UserResult {
 	params := api.CreateBudgetParams{
 		BudgetScope:         "user",
 		BudgetProductSku:    "premium_requests",
 		BudgetType:          "BundlePricing",
 		BudgetAmount:        entry.Amount,
-		PreventFurtherUsage: preventOverage,
+		PreventFurtherUsage: true,
 		User:                entry.Username,
 		BudgetAlerting: api.BudgetAlerting{
 			WillAlert:       false,
@@ -144,7 +144,7 @@ func processUser(ctx context.Context, client *api.Client, enterprise string, ent
 					_, _ = fmt.Fprintf(w, "✗ %s: %v [failed]\n", entry.Username, e2)
 					return UserResult{Username: entry.Username, Action: actionFailed, Err: e2}
 				}
-				_, updateErr := api.UpdateBudget(client, enterprise, existing.ID, entry.Amount, &preventOverage)
+				_, updateErr := api.UpdateBudget(client, enterprise, existing.ID, entry.Amount)
 				if updateErr != nil {
 					_, _ = fmt.Fprintf(w, "✗ %s: %v [failed]\n", entry.Username, updateErr)
 					return UserResult{Username: entry.Username, Action: actionFailed, Err: updateErr}
