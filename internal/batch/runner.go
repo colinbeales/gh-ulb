@@ -97,9 +97,15 @@ func Run(ctx context.Context, client *api.Client, enterprise string, entries []U
 }
 
 func processUser(ctx context.Context, client *api.Client, enterprise string, entry UserBudgetEntry, w io.Writer) UserResult {
+	sku, err := api.ResolveBudgetProductSku()
+	if err != nil {
+		_, _ = fmt.Fprintf(w, "✗ %s: %v [failed]\n", entry.Username, err)
+		return UserResult{Username: entry.Username, Action: actionFailed, Err: err}
+	}
+
 	params := api.CreateBudgetParams{
 		BudgetScope:         "user",
-		BudgetProductSku:    "premium_requests",
+		BudgetProductSku:    sku,
 		BudgetType:          "BundlePricing",
 		BudgetAmount:        entry.Amount,
 		PreventFurtherUsage: true,
@@ -114,7 +120,7 @@ func processUser(ctx context.Context, client *api.Client, enterprise string, ent
 	baseDelay := time.Second
 
 	for attempt := 0; attempt <= maxRetries; attempt++ {
-		_, err := api.CreateBudget(client, enterprise, params)
+		_, err = api.CreateBudget(client, enterprise, params)
 		if err == nil {
 			_, _ = fmt.Fprintf(w, "✓ %s: budget set to $%.2f [created]\n", entry.Username, entry.Amount)
 			return UserResult{Username: entry.Username, Action: actionCreated}
@@ -125,22 +131,28 @@ func processUser(ctx context.Context, client *api.Client, enterprise string, ent
 			switch httpErr.StatusCode {
 			case 409:
 				budgets, listErr := api.ListBudgets(client, enterprise, api.ListBudgetsOptions{
-					User:         entry.Username,
-					BudgetTarget: "premium_requests",
+					User: entry.Username,
 				})
 				if listErr != nil {
 					_, _ = fmt.Fprintf(w, "✗ %s: %v [failed]\n", entry.Username, listErr)
 					return UserResult{Username: entry.Username, Action: actionFailed, Err: listErr}
 				}
+
+				var userScopeBudgets []api.Budget
 				var existing *api.Budget
 				for i := range budgets {
 					if budgets[i].BudgetScope == "user" {
-						existing = &budgets[i]
-						break
+						userScopeBudgets = append(userScopeBudgets, budgets[i])
+						if budgets[i].BudgetProductSku == sku {
+							existing = &budgets[i]
+						}
 					}
 				}
+				if existing == nil && len(userScopeBudgets) == 1 {
+					existing = &userScopeBudgets[0]
+				}
 				if existing == nil {
-					e2 := fmt.Errorf("conflict but no existing user-scope budget found")
+					e2 := fmt.Errorf("conflict but no unambiguous existing user-scope budget found for sku %q", sku)
 					_, _ = fmt.Fprintf(w, "✗ %s: %v [failed]\n", entry.Username, e2)
 					return UserResult{Username: entry.Username, Action: actionFailed, Err: e2}
 				}

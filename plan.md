@@ -67,7 +67,7 @@ CSV format: `username` column required, optional `amount` column. If `amount` co
 
 **`list`:**
 - `--user` — filter to a specific user
-- `--budget-target` — filter by budget target (default: premium_requests)
+- `--budget-target` — filter by budget target (default: ai_credits, or premium_requests when GH_ULB_USE_PREMIUM_REQUESTS is true)
 
 **`get`:**
 - `--user, -u` (required) — GitHub username
@@ -207,7 +207,7 @@ All endpoints are under `https://api.github.com/enterprises/{enterprise}/setting
 |---|---|---|
 | POST | `/budgets` | Create a budget (universal or user) |
 | GET | `/budgets` | List all budgets |
-| GET | `/budgets?user={user}&budgetTarget=premium_requests` | Get budgets for a specific user |
+| GET | `/budgets?user={user}&budgetTarget=ai_credits` | Get budgets for a specific user |
 | PATCH | `/budgets/{budget_id}` | Update a budget amount |
 | DELETE | `/budgets/{budget_id}` | Delete a budget |
 
@@ -216,7 +216,7 @@ All endpoints are under `https://api.github.com/enterprises/{enterprise}/setting
 - `budget_scope` — `"multi_user_customer"` for universal, `"user"` for individual
 - `user` — GitHub username (only when scope is "user")
 - `prevent_further_usage` (bool) — block requests when exhausted
-- `budget_product_sku` — always `"premium_requests"`
+- `budget_product_sku` — defaults to `"ai_credits"` (`"premium_requests"` only when `GH_ULB_USE_PREMIUM_REQUESTS` is true)
 - `budget_type` — always `"BundlePricing"`
 - `budget_alerting` — `{ "will_alert": false, "alert_recipients": [] }` (alerting not yet available)
 

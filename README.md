@@ -70,7 +70,19 @@ All commands accept a `--enterprise` / `-e` flag (required) to specify the GitHu
 ### Budget Enforcement
 
 GitHub's current ULB API supports hard-stop enforcement only.
-`gh-ulb` always sends `prevent_further_usage: true`, so premium requests are blocked when a budget is exhausted.
+`gh-ulb` always sends `prevent_further_usage: true`, so usage is blocked when a budget is exhausted.
+
+### SKU Default Policy
+
+`gh-ulb` targets `ai_credits` by default.
+
+Legacy `premium_requests` targeting is available only via environment variable opt-in:
+
+```bash
+GH_ULB_USE_PREMIUM_REQUESTS=true gh ulb set-user --enterprise my-enterprise --user octocat --amount 25.00
+```
+
+Accepted values for `GH_ULB_USE_PREMIUM_REQUESTS` are: `true`/`false`, `1`/`0`, `yes`/`no`.
 
 ### `set-universal`
 
@@ -216,6 +228,8 @@ List all budgets configured for the enterprise.
 | Flag | Short | Description |
 |------|-------|-------------|
 | `--enterprise` | `-e` | Enterprise slug (required) |
+| `--user` | | Filter to a specific user |
+| `--budget-target` | | Filter by budget target. Defaults to `ai_credits` unless `GH_ULB_USE_PREMIUM_REQUESTS` is `true` |
 | `--json` | | Output as JSON |
 
 **Example**

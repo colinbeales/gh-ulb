@@ -3,9 +3,51 @@ package api
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strings"
 )
 
 var ErrUniversalBudgetNotFound = errors.New("universal budget not found")
+
+const (
+	BudgetProductSkuAICredits      = "ai_credits"
+	BudgetProductSkuPremiumRequest = "premium_requests"
+	EnvUsePremiumRequests          = "GH_ULB_USE_PREMIUM_REQUESTS"
+)
+
+// ResolveBudgetProductSku returns the default SKU based on environment policy.
+// ai_credits is always the default; premium_requests is only enabled via env opt-in.
+func ResolveBudgetProductSku() (string, error) {
+	usePremium, err := usePremiumRequestsFromEnv()
+	if err != nil {
+		return "", err
+	}
+	if usePremium {
+		return BudgetProductSkuPremiumRequest, nil
+	}
+	return BudgetProductSkuAICredits, nil
+}
+
+// ValidateBudgetProductSkuEnv validates GH_ULB_USE_PREMIUM_REQUESTS and returns an error on invalid values.
+func ValidateBudgetProductSkuEnv() error {
+	_, err := usePremiumRequestsFromEnv()
+	return err
+}
+
+func usePremiumRequestsFromEnv() (bool, error) {
+	v := strings.TrimSpace(strings.ToLower(os.Getenv(EnvUsePremiumRequests)))
+	if v == "" {
+		return false, nil
+	}
+	switch v {
+	case "1", "true", "yes":
+		return true, nil
+	case "0", "false", "no":
+		return false, nil
+	default:
+		return false, fmt.Errorf("invalid %s value %q (allowed: true/false, 1/0, yes/no)", EnvUsePremiumRequests, os.Getenv(EnvUsePremiumRequests))
+	}
+}
 
 type BudgetAlerting struct {
 	AlertRecipients []string `json:"alert_recipients"`

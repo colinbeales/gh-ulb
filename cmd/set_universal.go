@@ -21,10 +21,16 @@ var setUniversalCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		sku, err := api.ResolveBudgetProductSku()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
 		params := api.CreateBudgetParams{
 			BudgetAmount:        setUniversalAmount,
 			BudgetScope:         "multi_user_customer",
-			BudgetProductSku:    "premium_requests",
+			BudgetProductSku:    sku,
 			BudgetType:          "BundlePricing",
 			PreventFurtherUsage: true,
 			BudgetAlerting:      api.BudgetAlerting{WillAlert: false, AlertRecipients: []string{}},

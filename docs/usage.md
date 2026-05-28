@@ -11,7 +11,26 @@ GitHub's current ULB API supports hard-stop behavior only.
 
 When a budget is exhausted:
 
-- Further premium requests are blocked for that user until the budget resets.
+- Further AI credit usage is blocked for that user until the budget resets.
+
+---
+
+## SKU default behavior
+
+`gh-ulb` creates and targets budgets using `ai_credits` by default.
+
+To use legacy `premium_requests` behavior, set `GH_ULB_USE_PREMIUM_REQUESTS=true`:
+
+```bash
+GH_ULB_USE_PREMIUM_REQUESTS=true gh ulb set-universal --enterprise my-enterprise --amount 30.00
+```
+
+Accepted values:
+
+- True values: `true`, `1`, `yes`
+- False values: `false`, `0`, `no`
+
+The same policy is used by `list` when `--budget-target` is not explicitly provided.
 
 ---
 

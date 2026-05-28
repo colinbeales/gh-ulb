@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/colinbeales/gh-ulb/internal/api"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +17,9 @@ var rootCmd = &cobra.Command{
 	Short:   "Manage Copilot User-Level Budgets",
 	Version: "0.1.0",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := api.ValidateBudgetProductSkuEnv(); err != nil {
+			return err
+		}
 		if hostname != "" {
 			if err := os.Setenv("GH_HOST", hostname); err != nil {
 				return fmt.Errorf("setting GH_HOST: %w", err)

@@ -22,10 +22,16 @@ var setUserCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		sku, err := api.ResolveBudgetProductSku()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
 		params := api.CreateBudgetParams{
 			BudgetAmount:        setUserAmount,
 			BudgetScope:         "user",
-			BudgetProductSku:    "premium_requests",
+			BudgetProductSku:    sku,
 			BudgetType:          "BundlePricing",
 			User:                setUserUsername,
 			PreventFurtherUsage: true,

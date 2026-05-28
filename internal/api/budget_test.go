@@ -34,7 +34,7 @@ func TestCreateBudget_Success(t *testing.T) {
 	params := CreateBudgetParams{
 		BudgetAmount:     10.0,
 		BudgetScope:      "user",
-		BudgetProductSku: "premium_requests",
+		BudgetProductSku: BudgetProductSkuAICredits,
 		BudgetType:       "BundlePricing",
 		User:             "octocat",
 	}
@@ -252,5 +252,41 @@ func TestDeleteUniversalBudget_NotFound(t *testing.T) {
 	_, err := DeleteUniversalBudget(client, "my-enterprise")
 	if !errors.Is(err, ErrUniversalBudgetNotFound) {
 		t.Fatalf("expected ErrUniversalBudgetNotFound, got %v", err)
+	}
+}
+
+func TestResolveBudgetProductSku_DefaultAICredits(t *testing.T) {
+	t.Setenv(EnvUsePremiumRequests, "")
+
+	sku, err := ResolveBudgetProductSku()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if sku != BudgetProductSkuAICredits {
+		t.Fatalf("expected %q, got %q", BudgetProductSkuAICredits, sku)
+	}
+}
+
+func TestResolveBudgetProductSku_PremiumViaEnv(t *testing.T) {
+	t.Setenv(EnvUsePremiumRequests, "yes")
+
+	sku, err := ResolveBudgetProductSku()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if sku != BudgetProductSkuPremiumRequest {
+		t.Fatalf("expected %q, got %q", BudgetProductSkuPremiumRequest, sku)
+	}
+}
+
+func TestResolveBudgetProductSku_InvalidEnv(t *testing.T) {
+	t.Setenv(EnvUsePremiumRequests, "maybe")
+
+	_, err := ResolveBudgetProductSku()
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if !strings.Contains(err.Error(), EnvUsePremiumRequests) {
+		t.Fatalf("expected error to mention %s, got %v", EnvUsePremiumRequests, err)
 	}
 }

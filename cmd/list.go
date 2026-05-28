@@ -22,9 +22,18 @@ var listCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		budgetTarget := listBudgetTarget
+		if budgetTarget == "" {
+			budgetTarget, err = api.ResolveBudgetProductSku()
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
+		}
+
 		opts := api.ListBudgetsOptions{
 			User:         listUser,
-			BudgetTarget: listBudgetTarget,
+			BudgetTarget: budgetTarget,
 		}
 
 		budgets, err := api.ListBudgets(client, enterprise, opts)
@@ -43,6 +52,6 @@ var listCmd = &cobra.Command{
 
 func init() {
 	listCmd.Flags().StringVar(&listUser, "user", "", "Filter to a specific user")
-	listCmd.Flags().StringVar(&listBudgetTarget, "budget-target", "premium_requests", "Filter by budget target")
+	listCmd.Flags().StringVar(&listBudgetTarget, "budget-target", "", "Filter by budget target (defaults to ai_credits unless GH_ULB_USE_PREMIUM_REQUESTS is true)")
 	rootCmd.AddCommand(listCmd)
 }

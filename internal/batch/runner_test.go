@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -64,6 +65,9 @@ func TestRun_DryRun(t *testing.T) {
 }
 
 func TestRun_AllCreated(t *testing.T) {
+	t.Setenv(api.EnvUsePremiumRequests, "")
+	var seenSKU string
+
 	entries := []UserBudgetEntry{
 		{Username: "octocat", Amount: 50.0},
 		{Username: "monalisa", Amount: 25.0},
@@ -72,6 +76,17 @@ func TestRun_AllCreated(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			t.Errorf("expected POST, got %s", r.Method)
+		}
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatalf("reading request body: %v", err)
+		}
+		var payload map[string]interface{}
+		if err := json.Unmarshal(body, &payload); err != nil {
+			t.Fatalf("invalid json payload: %v", err)
+		}
+		if sku, ok := payload["budget_product_sku"].(string); ok {
+			seenSKU = sku
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
@@ -94,6 +109,51 @@ func TestRun_AllCreated(t *testing.T) {
 	}
 	if result.Failed != 0 {
 		t.Errorf("expected 0 failed, got %d", result.Failed)
+	}
+	if seenSKU != api.BudgetProductSkuAICredits {
+		t.Errorf("expected sku %q, got %q", api.BudgetProductSkuAICredits, seenSKU)
+	}
+}
+
+func TestRun_AllCreated_PremiumOnlyViaEnv(t *testing.T) {
+	t.Setenv(api.EnvUsePremiumRequests, "true")
+	var seenSKU string
+
+	entries := []UserBudgetEntry{{Username: "octocat", Amount: 50.0}}
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			t.Errorf("expected POST, got %s", r.Method)
+		}
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatalf("reading request body: %v", err)
+		}
+		var payload map[string]interface{}
+		if err := json.Unmarshal(body, &payload); err != nil {
+			t.Fatalf("invalid json payload: %v", err)
+		}
+		if sku, ok := payload["budget_product_sku"].(string); ok {
+			seenSKU = sku
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(api.Budget{ID: "b1", BudgetAmount: 50.0, BudgetScope: "user"})
+	}))
+	defer ts.Close()
+
+	client := newTestAPIClient(t, ts)
+	var buf bytes.Buffer
+	result, err := Run(context.Background(), client, "my-enterprise", entries, 1, false, &buf)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if result.Created != 1 || result.Updated != 0 || result.Failed != 0 {
+		t.Fatalf("unexpected result: %+v", result)
+	}
+	if seenSKU != api.BudgetProductSkuPremiumRequest {
+		t.Errorf("expected sku %q, got %q", api.BudgetProductSkuPremiumRequest, seenSKU)
 	}
 }
 
