@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"testing"
 
@@ -66,7 +67,10 @@ func TestRun_DryRun(t *testing.T) {
 
 func TestRun_AllCreated(t *testing.T) {
 	t.Setenv(api.EnvUsePremiumRequests, "")
-	var seenSKU string
+	var (
+		seenSKU   string
+		seenSKUMu sync.Mutex
+	)
 
 	entries := []UserBudgetEntry{
 		{Username: "octocat", Amount: 50.0},
@@ -86,7 +90,9 @@ func TestRun_AllCreated(t *testing.T) {
 			t.Fatalf("invalid json payload: %v", err)
 		}
 		if sku, ok := payload["budget_product_sku"].(string); ok {
+			seenSKUMu.Lock()
 			seenSKU = sku
+			seenSKUMu.Unlock()
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
