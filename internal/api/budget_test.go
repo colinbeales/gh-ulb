@@ -290,3 +290,13 @@ func TestResolveBudgetProductSku_InvalidEnv(t *testing.T) {
 		t.Fatalf("expected error to mention %s, got %v", EnvUsePremiumRequests, err)
 	}
 }
+
+func TestResolveListBudgetTarget_DefaultsToPremiumRequests(t *testing.T) {
+	target, err := ResolveListBudgetTarget()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if target != BudgetProductSkuPremiumRequest {
+		t.Fatalf("expected %q, got %q", BudgetProductSkuPremiumRequest, target)
+	}
+}

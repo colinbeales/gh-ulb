@@ -28,6 +28,12 @@ func ResolveBudgetProductSku() (string, error) {
 	return BudgetProductSkuAICredits, nil
 }
 
+// ResolveListBudgetTarget returns the default budgetTarget for list requests.
+// TODO: Remove this workaround and use ResolveBudgetProductSku() when the list API accepts ai_credits reliably.
+func ResolveListBudgetTarget() (string, error) {
+	return BudgetProductSkuPremiumRequest, nil
+}
+
 // ValidateBudgetProductSkuEnv validates GH_ULB_USE_PREMIUM_REQUESTS and returns an error on invalid values.
 func ValidateBudgetProductSkuEnv() error {
 	_, err := usePremiumRequestsFromEnv()
